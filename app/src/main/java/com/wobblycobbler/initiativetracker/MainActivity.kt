@@ -1,21 +1,22 @@
 package com.wobblycobbler.initiativetracker
 
-import android.graphics.Color
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity;
-import android.widget.ListView
+import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ArrayAdapter
-import android.widget.TextView
-
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.wobblycobbler.initiativetracker.db.AppDatabase
+import com.wobblycobbler.initiativetracker.db.entities.Character
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var listView: ListView
+    private lateinit var recyclerAdapter: CharacterRecyclerAdapter
+    private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var linearLayoutManager: LinearLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,16 +28,12 @@ class MainActivity : AppCompatActivity() {
                     .setAction("Action", null).show()
         }
 
-        listView = findViewById<ListView>(R.id.character_list_view)
-        val characterList = listOf("Willemet", "Nestor", "Barron", "Della", "Umlo", "Ewigga", "Dire Bear")
-        val listItems = arrayOfNulls<String>(characterList.size)
-        for (i in 0 until characterList.size) {
-            val character = characterList[i]
-            listItems[i] = character
-        }
-        val adapter = ArrayAdapter(this, R.layout.character_list_item, listItems)
-        listView.adapter = adapter
+        val db = AppDatabase.getDatabase(application).prepopulate()
 
+        linearLayoutManager = LinearLayoutManager(this)
+        characterRecyclerView.layoutManager = linearLayoutManager
+        recyclerAdapter = CharacterRecyclerAdapter(ArrayList(db.characterDao().getAll()))
+        characterRecyclerView.adapter = recyclerAdapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
