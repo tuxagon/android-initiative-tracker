@@ -29,7 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
                 instance = Room.inMemoryDatabaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java
-                ).allowMainThreadQueries().build()
+                ).build().prepopulate()
             }
             return instance!!
         }

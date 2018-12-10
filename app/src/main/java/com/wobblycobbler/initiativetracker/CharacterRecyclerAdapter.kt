@@ -2,12 +2,14 @@ package com.wobblycobbler.initiativetracker
 
 import android.util.Log
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.wobblycobbler.initiativetracker.db.entities.Character
 import kotlinx.android.synthetic.main.character_list_item.view.*
 
-class CharacterRecyclerAdapter(private val characters: ArrayList<Character>) :
+class CharacterRecyclerAdapter(private val characters: ArrayList<Character>, private val current: Int) :
     RecyclerView.Adapter<CharacterRecyclerAdapter.CharacterHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharacterRecyclerAdapter.CharacterHolder {
@@ -17,7 +19,8 @@ class CharacterRecyclerAdapter(private val characters: ArrayList<Character>) :
 
     override fun onBindViewHolder(holder: CharacterRecyclerAdapter.CharacterHolder, position: Int) {
         val itemCharacter = characters[position]
-        holder.bindCharacter(itemCharacter)
+        Log.d("CHARACTERS", characters.map { it.name }.joinToString { it })
+        holder.bindCharacter(itemCharacter, current == position)
     }
 
     override fun getItemCount() = characters.size
@@ -34,9 +37,10 @@ class CharacterRecyclerAdapter(private val characters: ArrayList<Character>) :
             Log.d("CharacterRecyclerView", "CLICK!")
         }
 
-        fun bindCharacter(character: Character) {
+        fun bindCharacter(character: Character, isCurrent: Boolean) {
             this.character = character
             view.characterName.text = character.name
+            view.currentCharacterTextIndicator.visibility = if (isCurrent) VISIBLE else GONE
         }
     }
 }
